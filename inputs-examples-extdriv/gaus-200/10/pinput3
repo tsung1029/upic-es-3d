@@ -1,0 +1,62 @@
+&pinput3
+IDRUN = 1
+INDX =   5, INDY =   10, INDZ = 10
+NPX =   4096, NPY = 8192, NPZ = 8192
+NPXB =   0, NPYB =   0, NPZB =  0
+INORDER = 2, POPT = 2, DOPT = 2, DJOPT = 2
+NTW = 0, NTP = 5, NTD = 0, NTA = 0, NTV = 0, NTS = 0
+NTM = 0
+NUSTRT = 0, NTR = 0, PSOLVE = 1, RELATIVITY = 0
+TEND =  1000.000, DT =   0.2, CI = 0.1
+QME =  -1.000, VTX =  1.696, VTY =   1.696, VTZ = 1.696
+VX0 =   0.000, VY0 =  0.000, VZ0 =   0.000
+VDX =   0.000, VDY =   0.000, VDZ =   5.000
+VTDX =   0.500, VTDY =   0.500, VTDZ =   0.500
+AX =    0.866667, AY =   0.866667, AZ =   0.866667
+NSRAND = 0, NDPROF = 0
+AMPDX = 0.0, SCALEDX = 0.0, SHIFTDX = 0.0
+AMPDY = 0.0, SCALEDY = 0.0, SHIFTDY = 0.0
+AMPDZ = 0.0, SCALEDZ = 0.0, SHIFTDZ = 0.0
+MOVION = 0, NPXI =  4, NPYI =  4, NPZI =  4
+NPXBI =   0, NPYBI =   0, NPZBI =   0
+QMI =  1.000, RMASS = 64.0
+RTEMPXI =   1.000, RTEMPYI =   1.000, RTEMPZI =   1.000
+VXI0 =   0.000, VYI0 =   0.000, VZI0 =   0.000
+VDXI =   0.000, VDYI =   0.000, VDZI =   0.000
+NSRANDI = 0, NDPROFI = 0
+AMPDXI = 0.0, SCALEDXI = 0.0, SHIFTDXI = 0.0
+AMPDYI = 0.0, SCALEDYI = 0.0, SHIFTDYI = 0.0
+AMPDZI = 0.0, SCALEDZI = 0.0, SHIFTDZI = 0.0
+SORTIME = 10, SORTIMI = 100
+NPLOT = 0, IDPAL = 1, NDSTYLE = 1
+ntp=0
+/
+ 
+&pinput3_jf
+driver_select = 7
+amp=0.040,wavemode=1,wavew=1.15
+rise = 5.46,flat = 10.92,fall=5.46,yrise_fall=407.42
+timerise=5.46,timeflat=10.92,timefall=5.46
+
+ntfield = 20
+write_stride(1:3) = 1,4,4
+
+nt_write_U_sumover_x = 0
+
+fvxmax=12., fvymax=12., fvzmax=12.
+nphbx=150,nphby=150,nphbz=150
+nphxx=100,nphyx=100,nphzx=100
+nphxy=100,nphyy=100,nphzy=100
+nphxz=100,nphyz=100,nphzz=100
+/
+
+&pinput3_ie
+check_period = 5000
+
+smoothIon = 0
+
+nteste = 0
+qetest(1:6,1) = 64.0,64.0,16.0,0,0,3.0
+ntesti = 0
+qitest(1:6,1) = 1023.0,1023.0,1023.0,0,0,0
+/

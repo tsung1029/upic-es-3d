@@ -1,0 +1,18 @@
+The field of view is (-600,+600) A in the x direction, (-1800,+600) A in the y direction. 
+
+projectile:
+Z=10
+m=20.1797
+v={68,86.4973,110.0260} A/fs.  The plot y axis is aligned with this vector.
+
+target:
+T=10.8846eV
+rho=1.031e20/cc
+
+
+lde =  24.1544 A
+vth = 13.8362 A/fs
+omgpe =  0.5728 1/fs
+
+m_proj = 20.1797*1824
+
