@@ -1,3 +1,51 @@
+#Makefile for 3D parallel PIC codes in new_pbeps32.source
+
+
+# Makefile mpiifort compiler at LLNL
+
+###############################################################################
+###############################################################################
+# MacMPI
+
+
+
+# MacMPI
+MPIFC = mpif90
+MPIFC77 = mpif90
+
+FC90 = mpif90
+FC77 = mpif90
+CC = mpicc
+
+OPTS90 = -O3 -fdefault-real-8 -ffree-form
+OPTS77 = -O3 -fdefault-real-8
+CCOPTS = -O -march=native -std=c99
+#MOPTS = -fno-automatic
+#MBOPTS = -fno-automatic
+#LOPTS =
+#LEGACY =
+
+
+
+# Link convention
+UNDERSCORE = FORTRANSINGLEUNDERSCORE
+
+MPIOBJS = nullLOG.o
+
+HDF_DIR = /usr/local/
+HDF_LIBPATH = -L$(HDF_DIR)/lib -lhdf5_fortran -lhdf5  -lhdf5_hl -lhdf5hl_fortran -lz
+HDF_INCPATH = -I$(HDF_DIR)/include
+
+# SZIP_LIBPATH = -L/usr/local/tools/szip/lib -lsz
+SZIP_LIBPATH = 
+
+
+INCPATH = $(HDF_INCPATH)
+LIBPATH = $(HDF_LIBPATH) $(SZIP_LIBPATH)
+
+###############################################################################
+###############################################################################
+
 
 SYSOBJS = os-sys-multi-c.o os-sys-multi.o
 
@@ -6,7 +54,7 @@ GESOBJSIE = psimul32mod_ie.o pespush32mod_ie.o
 MGESOBJS = mpespush32mod.o mpsimul32mod.o
 
 ESOBJS = globals.o pinit32mod.o \
-pfft32mod.o pfield32mod.o pdiag32mod.o p32mod.o p0mod.o mp0mod.o \
+pfft32mod.o pfield32mod.o pdiag32mod.o p0mod.o mp0mod.o \
 pinit32lib.o pfft32lib.o pfield32lib.o \
 pdiag32lib.o p0lib.o 
 
@@ -14,10 +62,10 @@ ESOBJSJF = pinit32mod_jf.o \
 ext_driver32_jf.o p32mod_jf.o pinit32lib_jf.o
 #ppush2mod_jf.o ppush2lib_jf.o pfield2mod_jf.o
 
-ESOBJS_IE = pinit32mod_ie.o sqnmod_ie.o p32lib_ie.o prbpush32mod_ie.o \
+ESOBJSIE = pinit32mod_ie.o sqnmod_ie.o p32mod_ie.o p32lib_ie.o prbpush32mod_ie.o \
 prbpush32lib_ie.o ppush32mod_ie.o ppush32lib_ie.o \
 string.o os_util_hdf5.o data_utils.o p_os_util_hdf5.o pdata_utils.o \
-hdf5_write32_ie.o diag32_ie.o test_part_mod_ie.o
+hdf5_write32_ie.o diag32_ie.o par_track.o
 
 MESOBJS = mprbpush32mod.o mppush32mod.o mpfft32mod.o mp32mod.o \
 mprbpush32lib.o mppush32lib.o mpfft32lib.o mp32lib.o 
@@ -44,8 +92,9 @@ all : new_pbeps32_ie.out
 
 threaded: new_mpbeps32.out new_d0_mpbeps32.out new_mpbbeps32.out new_d0_mpbbeps32.out
 
-new_pbeps32_ie.out : new_pbeps32_ie.o $(SYSOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJS_IE) $(MPIOBJS) $(NPOBJS)
-	$(MPIFC) $(OPTS90) $(LOPTS) -o new_pbeps32_ie.out new_pbeps32_ie.o $(SYSOBJS) $(GESOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJS_IE) $(MPIOBJS) $(NPOBJS) $(LIBPATH) $(INCPATH)
+new_pbeps32_ie.out : new_pbeps32_ie.o $(SYSOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS)
+	$(MPIFC) $(OPTS90) $(LOPTS) -o new_pbeps32_ie.out \
+	new_pbeps32_ie.o $(SYSOBJS) $(GESOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS) $(LIBPATH) $(INCPATH)
 
 new_pbeps32.out : new_pbeps32.o $(GESOBJS) $(ESOBJS) $(MPIOBJS) $(NPOBJS)
 	$(MPIFC) $(OPTS90) $(LOPTS) -o new_pbeps32.out \
@@ -94,17 +143,8 @@ new_d0_mpbbeps32.out : new_d0_mpbbeps32.o $(ESOBJS) $(MESOBJS) $(MGEMOBJS) $(EMO
 #MacMPIcf.o : MacMPIcf.c
 #	$(CC) $(CCOPTS) -c MacMPIcf.c
 
-MacMPIf77.o : MacMPIf77.c
-	$(CC) $(CCOPTS) -c MacMPIf77.c
 
-MacMPIxlf.o : MacMPIxlf.c
-	$(CC) $(CCOPTS) -c MacMPIxlf.c
 
-MacMPI_S.o : MacMPI_S.c
-	$(CC) $(CCOPTS) -c -I /Developer/Headers/FlatCarbon MacMPI_S.c
-
-LnxMPI_S.o : LnxMPI_S.c
-	$(CC) $(CCOPTS) -c LnxMPI_S.c
 
 #MacMPcf.o : MacMPcf.c
 #	$(CC) $(CCOPTS) -c MacMPcf.c
@@ -254,8 +294,8 @@ pnpfield32mod.o : pnpfield32mod.f pfield32mod.o pdfield32mod.o pbfield32mod.o \
 pdiag32mod.o : pdiag32mod.f pinit32mod.o
 	$(FC90) $(OPTS90) -c pdiag32mod.f
 	
-test_part_mod_ie.o : test_part_mod_ie.f
-	$(FC90) $(OPTS90) -c -free test_part_mod_ie.f
+par_track.o : par_track.f pinit32mod_jf.o
+	$(FC90) $(OPTS90) $(HDF_INCPATH) -c -free par_track.f
 
 diag32_ie.o : diag32_ie.f pinit32mod.o pinit32mod_ie.o pinit32mod_jf.o hdf5_write32_ie.o p32mod_jf.o
 	$(FC90) $(OPTS90) -c -free diag32_ie.f
@@ -302,6 +342,9 @@ mp32mod.o : mp32mod.f p32mod.o mp0mod.o
 p32mod.o : p32mod.f p0mod.o
 	$(FC90) $(OPTS90) $(LEGACY) -c p32mod.f
 
+p32mod_ie.o : p32mod_ie.f p0mod.o par_track.o
+	$(FC90) $(OPTS90) $(LEGACY) -c -free p32mod_ie.f
+
 p32mod_jf.o : p32mod_jf.f p0mod.o
 	$(FC90) $(OPTS90) $(LEGACY) -c -free p32mod_jf.f
 
@@ -312,7 +355,7 @@ mpespush32mod.o : mpespush32mod.f mprbpush32mod.o mppush32mod.o mpfft32mod.o \
 pespush32mod.o : pespush32mod.f prbpush32mod.o ppush32mod.o pfft32mod.o p32mod.o
 	$(FC90) $(OPTS90) -c pespush32mod.f
 
-pespush32mod_ie.o : pespush32mod_ie.f prbpush32mod_ie.o ppush32mod_ie.o pfft32mod.o p32mod.o
+pespush32mod_ie.o : pespush32mod_ie.f prbpush32mod_ie.o ppush32mod_ie.o pfft32mod.o p32mod_ie.o
 	$(FC90) $(OPTS90) -c pespush32mod_ie.f
 
 mpempush32mod.o : mpempush32mod.f mprbpush32mod.o mpbpush32mod.o mppush32mod.o \

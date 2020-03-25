@@ -196,7 +196,7 @@
 
 
 ! hdf5 variables
-        integer(HID_T), dimension(rank) :: bc, mc 
+        integer, dimension(rank) :: bc, mc 
         integer(hid_t) :: d_float=0
         integer(hid_t) :: flplID=0, xferID=0, dcplID=0, memspaceID=0 
         integer(hid_t) :: file_id=0, rootID=0, dset_id=0, dspace_id=0
@@ -480,7 +480,7 @@
         integer(hid_t) :: d_float
         logical :: filexisted
 
-        integer(HID_T), dimension(rank) :: bc, mc 
+        integer, dimension(rank) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, driver 
@@ -741,7 +741,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend, filexisted
 
-        integer(HID_T), dimension(rank) :: bc, mc 
+        integer, dimension(rank) :: bc, mc 
         
 ! common block for parallel processing
         integer nproc, lgrp, lstat, mreal, mint, mcplx, mdouble, lworld
@@ -927,7 +927,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend
 
-        integer(HID_T), dimension(1) :: bc, mc 
+        integer, dimension(1) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, attrID 
@@ -1361,7 +1361,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend
 
-        integer(HID_T), dimension(1) :: bc, mc 
+        integer, dimension(1) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, attrID 
@@ -1729,7 +1729,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend
 
-        integer(HID_T), dimension(1) :: bc, mc 
+        integer, dimension(1) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, attrID 
@@ -2265,7 +2265,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend
 
-        integer(HID_T), dimension(1) :: bc, mc 
+        integer, dimension(1) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, attrID 
@@ -2764,7 +2764,7 @@
         integer(hid_t) :: d_float
         logical :: ldoappend
 
-        integer(HID_T), dimension(1) :: bc, mc 
+        integer, dimension(1) :: bc, mc 
 
 ! hdf5 variables
         integer(hid_t) :: flplID, xferID, dcplID, memspaceID, attrID 

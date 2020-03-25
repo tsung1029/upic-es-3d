@@ -102,7 +102,7 @@
           character(len_trim(path)+1+len_trim(file)) :: filename
           integer(HID_T) :: file_id, dspace_id, dset_id, rootID
           real, dimension(rank) :: xmax 
-          integer(HID_T), dimension(rank) :: bc, mc 
+          integer, dimension(rank) :: bc, mc 
 
           integer(HID_T) :: d_float
           integer :: ierror
@@ -192,7 +192,7 @@
           character(len_trim(path)+1+len_trim(file)) :: filename
           integer(HID_T) :: file_id, dspace_id, dset_id, rootID
           real, dimension(rank) :: xmax 
-          integer(HID_T), dimension(rank) :: bc, mc 
+          integer, dimension(rank) :: bc, mc 
 
           integer(HID_T) :: d_float
           integer :: ierror, ierror2
@@ -574,7 +574,8 @@
           integer(hid_t), intent(in) :: file_id
           integer(hid_t), intent(inout) :: dset_id
 
-          integer(hid_t) :: stringType, attrID, ierr 
+          integer(hid_t) :: stringType, attrID 
+          integer ierr
           character(len=80) :: string
           integer(size_t) :: str_len
 !          integer :: str_len
@@ -682,8 +683,6 @@
 
         end subroutine add_h5_axes_serial 
 !---------------------------------------------------
-
-
 
 !---------------------------------------------------------------------------------------------------
         subroutine add_h5_attrs_serial( file_id, name, t, n, dt,        &

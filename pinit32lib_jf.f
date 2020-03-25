@@ -1,8 +1,9 @@
 c modified by Jay Fahlen from PVVISTR32 to do random postions of
 c particles distributed randomly in space, but all on the correct
 c processor
-      subroutine UNIF_RNDM_INIT(part,npp,nps,xs,ys,zs,lx,ly,lz,npx,npy,n
-     1pz,idimp,npmax,mblok,nblok,posx,posy,posz,kstrt,nvp,ndv,nvrp,ierr)
+      subroutine UNIF_RNDM_INIT(part,npp,nps,xs,ys,zs,lx,ly,lz,npx,npy,
+     1npz,idimp,npmax,mblok,nblok,posx,posy,posz,kstrt,nvp,ndv,nvrp,
+     2ierr)
 c for 3 code, this subroutine calculates initial positions
 c  for distributed data
 c with 2D spatial decomposition

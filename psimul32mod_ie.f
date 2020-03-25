@@ -64,7 +64,7 @@
            common /PPARMS/ nproc, lgrp, mreal, mint, mcplx, mdouble, lworld
 
            ! variables
-           integer :: fid
+           integer(8) :: fid
            character(len = 70) :: fname
 
            ! determine the rank of the calling process in the communicator
@@ -446,8 +446,10 @@
                      max_npoints = maxval(tracks_npoints) ! limit size of send
 
                      if (ii/=idproc) then 
-                        call MPI_IRECV(tracks_n(:,1:max_npoints),size(tracks_n(:,1:max_npoints)),mint,ii,95,lworld,msid(1),ierror)
-                        call MPI_IRECV(tracks_data(:,:,1:max_npoints),size(tracks_data(:,:,1:max_npoints)),mreal,ii,94,lworld,msid(4),ierror)
+                        call MPI_IRECV(tracks_n(:,1:max_npoints), & 
+                     & size(tracks_n(:,1:max_npoints)),mint,ii,95,lworld,msid(1),ierror)
+                        call MPI_IRECV(tracks_data(:,:,1:max_npoints), &
+                     &  size(tracks_data(:,:,1:max_npoints)),mreal,ii,94,lworld,msid(4),ierror)
                      endif
 
                      ! write the crap
@@ -648,8 +650,10 @@
                   ! wait to send the rest...so the receiving node has info to be ready to receive (necessary to wait?)         
                   call MPI_WAIT(msid(1),istatus,ierror)
 
-                  call MPI_ISEND(tracks_n(:,1:max_npoints),size(tracks_n(:,1:max_npoints)),mint,ioLeader,95,lworld,msid(1),ierror)
-                  call MPI_ISEND(tracks_data(:,:,1:max_npoints),size(tracks_data(:,:,1:max_npoints)),mreal,ioLeader,94,lworld,msid(4),ierror)
+                  call MPI_ISEND(tracks_n(:,1:max_npoints), & 
+                  & size(tracks_n(:,1:max_npoints)),mint,ioLeader,95,lworld,msid(1),ierror)
+                  call MPI_ISEND(tracks_data(:,:,1:max_npoints),&
+                  & size(tracks_data(:,:,1:max_npoints)),mreal,ioLeader,94,lworld,msid(4),ierror)
 
                   ! wait to finish sending
                   !call MPI_WAITALL(msid,istatuses,ierror)
@@ -1284,12 +1288,14 @@
                          !n
                          varstr = trim(adjustl(tempstr)) // '/n'
                          call read_dataset(file_id, dims2, tracks_n(:,1:max_npoints), trim(varstr))
-                         if (ii/=idproc) call MPI_ISEND(tracks_n(:,1:max_npoints),size(tracks_n(:,1:max_npoints)),mint,ii,95,lworld,msid(1),ierr)
+                         if (ii/=idproc) call MPI_ISEND(tracks_n(:,1:max_npoints), &
+                     &   size(tracks_n(:,1:max_npoints)),mint,ii,95,lworld,msid(1),ierr)
 
                          !data
                          varstr = trim(adjustl(tempstr)) // '/data'
                          call read_dataset(file_id, dims3, tracks_data(:,:,1:max_npoints), trim(varstr))
-                         if (ii/=idproc) call MPI_ISEND(tracks_data(:,:,1:max_npoints),size(tracks_data(:,:,1:max_npoints)),mreal,ii,94,lworld,msid(4),ierr)
+                         if (ii/=idproc) call MPI_ISEND(tracks_data(:,:,1:max_npoints), &
+                     &   size(tracks_data(:,:,1:max_npoints)),mreal,ii,94,lworld,msid(4),ierr)
                          if (ii/=idproc) then
                            !call MPI_WAITALL(msid,istatuses,ierr)
                            call MPI_WAIT(msid(2),istatus,ierr)
@@ -1444,9 +1450,11 @@
 
                   if (max_npoints>0) then
                      !print*, 'idproc=', idproc, 'maxnpoints=', max_npoints
-                     call MPI_IRECV(tracks_n(:,1:max_npoints),size(tracks_n(:,1:max_npoints)),mint,ioLeader,95,lworld,msid(1),ierr)
+                     call MPI_IRECV(tracks_n(:,1:max_npoints),& 
+                  &  size(tracks_n(:,1:max_npoints)),mint,ioLeader,95,lworld,msid(1),ierr)
                      !print*, 'idproc=', idproc, 'after n', ' maxnpoints=', max_npoints
-                     call MPI_IRECV(tracks_data(:,:,1:max_npoints),size(tracks_data(:,:,1:max_npoints)),mreal,ioLeader,94,lworld,msid(4),ierr)
+                     call MPI_IRECV(tracks_data(:,:,1:max_npoints), &
+                  &  size(tracks_data(:,:,1:max_npoints)),mreal,ioLeader,94,lworld,msid(4),ierr)
                      !print*, 'idproc=', idproc, 'after data', ' maxnpoints=', max_npoints
                      !call MPI_WAITALL(msid,istatuses,ierr)
                      call MPI_WAIT(msid(2),istatus,ierr)

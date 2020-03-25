@@ -1472,7 +1472,7 @@ subroutine setup_track_set( track_set, ndump, restart )
 		 endif
 	  enddo
 	  
-	  read( unit = file_id_tem, fmt= '(i)') track_set%ntracks
+	  read( unit = file_id_tem, fmt= '(i12)') track_set%ntracks
 	  
 		allocate( track_set%tracks(track_set%ntracks), stat = ierr )
 	  	  	  
@@ -1489,7 +1489,7 @@ subroutine setup_track_set( track_set, ndump, restart )
    
 	  ! read tags and setup individual track objects   
 	  do i = 1, track_set%ntracks
-		 read( unit = file_id_tem, fmt= '(i,i)') tag1, tag2
+		 read( unit = file_id_tem, fmt= '(i12,i12)') tag1, tag2
 		 
 !		 print*,tag1,tag2
 		 call setup( track_set%tracks(i), track_set%maxpoints, (/tag1,tag2/), 0 )
@@ -1558,7 +1558,7 @@ subroutine setup_track_set_send( track_set, ndump, restart, part, idproc, nvp )
 			 endif
 			enddo
 			
-			read( unit = file_id_tem, fmt= '(i)') track_set%ntracks
+			read( unit = file_id_tem, fmt= '(i12)') track_set%ntracks
 						
 			allocate(tagsarray(2*track_set%ntracks))
 
@@ -1582,7 +1582,7 @@ subroutine setup_track_set_send( track_set, ndump, restart, part, idproc, nvp )
 		 
 			! read tags and setup individual track objects   
 			do i = 1, track_set%ntracks
-			 read( unit = file_id_tem, fmt= '(i,i)') tag1, tag2
+			 read( unit = file_id_tem, fmt= '(i12,i12)') tag1, tag2
 			 
 			 tagsarray(2*i-1) = tag1
 			 tagsarray(2*i) = tag2
@@ -2115,7 +2115,7 @@ subroutine setup_tagged_particles_send(part, idproc, nvp )
 			 endif
 			enddo
 			
-			read( unit = file_id_tem, fmt= '(i)') ntags
+			read( unit = file_id_tem, fmt= '(i12)') ntags
 						
 			allocate(tagsarray(2*ntags))
 			
@@ -2130,7 +2130,7 @@ subroutine setup_tagged_particles_send(part, idproc, nvp )
 				
 			! read tags and setup individual track objects   
 			do i = 1, ntags
-			 read( unit = file_id_tem, fmt= '(i,i)') tag1, tag2
+			 read( unit = file_id_tem, fmt= '(i12,i12)') tag1, tag2
 			 
 			 tagsarray(2*i-1) = tag1
 			 tagsarray(2*i) = tag2
