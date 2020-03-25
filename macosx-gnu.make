@@ -85,10 +85,10 @@ NPOBJS = nullMP.o
 
 # Linkage rules
 
-all : new_pbeps32_ie.out
+production : new_pbeps32_ie.out
 
-#all : new_pbeps32.out new_d0_pbeps32.out new_pbbeps32.out new_d0_pbbeps32.out \
-#     threaded
+all : new_pbeps32.out new_d0_pbeps32.out new_pbbeps32.out new_d0_pbbeps32.out \
+     threaded new_pbeps32_ie.out
 
 threaded: new_mpbeps32.out new_d0_mpbeps32.out new_mpbbeps32.out new_d0_mpbbeps32.out
 
