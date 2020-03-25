@@ -16,7 +16,7 @@ Currently available makefile include:
 
 macosx-gnu.make  --> for OS X using the GNU compiler.
 
-cori-haswell.make --> for Cori HASWELL CPU's.  (using intel compiler).  It requires the following modules
-    PrgEnv-intel
-    cray-hdf5-parallel
-    craype-haswell
+cori-haswell.make --> for Cori HASWELL CPU's.  (using intel compiler).  It requires the following modules \\ \\
+    PrgEnv-intel \\
+    cray-hdf5-parallel \\
+    craype-haswell \\
