@@ -81,7 +81,7 @@ MEMOBJS = mpbpush32mod.o mpbpush32lib.o
 DESOBJS = pdfield32mod.o pbfield32mod.o pcfield32mod.o pnpfield32mod.o \
 pdfield32lib.o pbfield32lib.o pcfield32lib.o
 
-NPOBJS = nullMP.o
+NPOBJS = LnxMP.o LPProcessors.o MacMPf77.o
 
 # Linkage rules
 
