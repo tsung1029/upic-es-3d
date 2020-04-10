@@ -1218,7 +1218,7 @@ program pbeps32
     case (12)
         call supergauss_tran_per_wavelen(fxyze, real(ntime) * dt, nx, nxe, ny, nypmx, nz, nzpmx, nvpy, nvpz, idproc)
     case (5)
-    	call two_laguerre_gaussian_beams(fxyze, real(ntime) * dt, nx, nxe, ny, nypmx, nz, nzpmx, nvpy, nvpz, idproc)
+    	call two_laguerre_gaussian_beams(fxyze, real(ntime) * dt, nx, nxe, ny, nypmx, nz, nzpmx, nvpy, nvpz, idproc, l_number1, l_number2)
     case default
         print*, "driver_select = ", driver_select, " is not yet implemented.  Exiting..."
         call MP_END
