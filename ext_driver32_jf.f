@@ -10,6 +10,7 @@ module ext_driver32_jf
 	public :: gauss_tran_per_wavelen_circle_wavefronts
 	public :: gauss_tran_per_wavelen_pois,rect_tran_per_wavelen
 	public :: do_nothing,supergauss_tran_per_wavelen
+	public :: two_laguerre_gaussian_beams
 	
 	contains
 	
@@ -922,6 +923,66 @@ module ext_driver32_jf
 !		enddo
 !	endif
 	end subroutine rect_tran_per_wavelen
+
+
+        subroutine two_laguerre_gaussian_beams(fxyze,t,nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc, l_number1, l_number2)
+                integer :: nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc, l_number1, l_number2
+                real :: t
+                real,dimension(:,:,:,:,:) :: fxyze
+                integer :: i,j,k, yproc, zproc
+                integer, dimension(:,:,:),allocatable,save :: proc_pos
+                real :: xstart,xpos,ypos, zpos, r2, spotsize2, z_R2, l_sum, l_diff, wavek,tempamp,fac, tfac, w_p, phi_l, spot_size2
+
+                wavek = real(nx)/wavemode
+                wavek = 6.283185307/wavek
+
+                if (.not. allocated(proc_pos)) then
+                        allocate(proc_pos(nvpy,nvpz,2))
+                        do i = 0, nvpy-1
+                                do j = 0, nvpz-1
+                                        proc_pos(i+1,j+1,1) = ny / nvpy
+                                        proc_pos(i+1,j+1,1) = proc_pos(i+1,j+1,1) * i
+                                        proc_pos(i+1,j+1,2) = nz / nvpz
+                                        proc_pos(i+1,j+1,2) = proc_pos(i+1,j+1,2) * j
+                                enddo
+			enddo
+                endif
+                
+                if (t < timerise) then
+                        tfac = t / timerise
+                else if (t < timerise + timeflat) then
+                        tfac = 1.
+                else if (t < timerise + timeflat + timefall) then
+                        tfac = 1. - (t - (timerise+timeflat))/timefall
+                endif
+                
+                tfac = tfac * amp
+
+                if (t < timerise + timeflat + timefall) then
+                        do i = 1, nxe   
+                                do j = 1, nypmx
+                                        do k = 1, nzpmx
+                                                yproc = mod(idproc,nvpy) + 1
+                                                zproc = idproc / nvpy + 1
+                                                ypos = real(proc_pos(yproc,zproc,1) + j - 512.)
+                                                zpos = real(proc_pos(yproc,zproc,2) + k - 512.)
+                                                r2 = ypos ** 2. + zpos ** 2.
+                                                spot_size2 = spot_size ** 2.
+                                                l_sum = real(l_number1 + l_number2)
+                                                l_diff = real(l_number1 - l_number2)
+                                                phi_l = l_diff * atan2(zpos, ypos)
+                                                xpos = real(i) - 2.
+                                                w_p = 1.
+                                                tempamp = tfac * 2. * (2. * r2 / spot_size2) ** (l_sum / 2.) * exp(-2.*r2 / spot_size2)
+						fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1) - wavek * tempamp * sin(phi_l -wavek * xpos + t)
+                                                fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1) + tempamp * (-1 * zpos * l_diff / r2 * sin(phi_l - wavek * xpos + t) + ypos * (-l_sum / r2 + 4. / spot_size2) * cos(phi_l-wavek *  xpos + t))
+                                                fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) + tempamp * (ypos * l_diff / r2 * sin(phi_l - wavek * xpos + t) + zpos * (-l_sum / r2 + 4. / spot_size2) * cos(phi_l - wavek * xpos + t))
+                                        enddo
+                                enddo
+                        enddo
+                endif
+
+        end subroutine two_laguerre_gaussian_beams
 
 
 end module ext_driver32_jf
