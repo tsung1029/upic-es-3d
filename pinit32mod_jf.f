@@ -33,7 +33,8 @@
       public :: nt_write_U_sumover_x, npfac
       public :: nt_bin_E,bin_E,bin_E_xrange,bin_E_yrange,bin_E_Exrange,bin_E_Eyrange,raw_cycle_x_move
       public :: write_stride
-      
+      public :: l_number1,l_number2,spot_size
+
       save
       
       integer :: ntfield = 0,wavemode=0
@@ -176,7 +177,7 @@
       integer :: l_number1 = 0, l_number2 = 1
       ! laser spot size for Laguerre Gaussian mode
       real :: spot_size
-      
+
       namelist /pinput3_jf/ ntfield, amp,wavemode,wavew,fvxmax,fvymax,&
       	&nphbx,nphby,nphxx,nphyx,rise,flat,fall,driver_select,timerise,&
       	&timeflat,timefall,yrise_fall,linepos,ntlines,phsl_x_pos,phsl_x_thick,ntphsl_x,&
@@ -347,10 +348,10 @@
 				ddata(143) = nphxz
 				ddata(144) = nphyz
 				ddata(145) = nphzz
-				ddata(146) = l_number1
-				ddata(147) = l_number2
-				ddata(148) = spot_size
-				
+			        ddata(146) = l_number1
+                                ddata(147) = l_number2
+                                ddata(148) = spot_size
+                                
 				call PBCAST(ddata,lenml)
 				ntfield = ddata(1)
 				amp = ddata(2)
@@ -461,9 +462,9 @@
 				nphxz = ddata(143)
 				nphyz = ddata(144)
 				nphzz = ddata(145)
-				l_number1 = ddata(146)
-				l_number2 = ddata(147)
-				spot_size = ddata(148)
+                                l_number1 = ddata(146)
+                                l_number2 = ddata(147)
+                                spot_size = ddata(148)
 
 			end subroutine sendnml_jf
       	

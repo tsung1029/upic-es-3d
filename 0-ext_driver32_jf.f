@@ -12,8 +12,7 @@ module ext_driver32_jf
 	public :: do_nothing,supergauss_tran_per_wavelen
 	public :: laguerre_gaussian_ponderomotive_force
         public :: two_laguerre_gaussian_beams
-        public :: two_lg_beams_zdir
-
+	
 	contains
 	
 	subroutine do_nothing()
@@ -962,7 +961,7 @@ module ext_driver32_jf
 
 		if (t < timerise + timeflat + timefall) then
 		
-			! Array position 2 corresponds to x=0 cause of guard cells
+			! Array position 2 corresponds to x=0 cause of gaurdcells
 			do j = 1, nypmx
 				do k = 1, nzpmx
 					yproc = mod(idproc,nvpy) + 1
@@ -973,21 +972,9 @@ module ext_driver32_jf
 					spot_size2 = spot_size ** 2. 
                                         do i=1, nxe
                                                 xpos = real(i) - 2.
-						fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1) + &
-                                                &tfac * (2.*xpos/(xpos ** 2. + z_R2) *(amp &
-                                                &/ (1. + xpos ** 2. / z_R2) * (2. * r2 / &
-                                                &spot_size2) ** l_number * exp(-2.*r2/ &
-                                                &spot_size2)))
-						fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1) + tfac * &
-                                                &(-ypos *(2.*l_number/r2 - 4./spot_size2)*(amp &
-                                                &/ (1. + xpos ** 2. / z_R2) * (2. * r2 / &
-                                                &spot_size2) ** l_number * exp(-2.*r2/ &
-                                                &spot_size2)))
-						fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) + tfac * &
-                                                &(-zpos * (2.*l_number/r2 - 4./spot_size2) *&
-                                                &(amp / (1. + xpos ** 2. / z_R2) * (2. * r2 /&
-                                                & spot_size2) ** l_number * exp(-2.*r2/ &
-                                                &spot_size2)))
+						fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1) + tfac * (2.*xpos/(xpos ** 2. + z_R2) *(amp / (1. + xpos ** 2. / z_R2) * (2. * r2 / spot_size2) ** l_number * exp(-2.*r2/ spot_size2)))
+						fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1) + tfac * (-ypos *(2.*l_number/r2 - 4./spot_size2)*(amp / (1. + xpos ** 2. / z_R2) * (2. * r2 / spot_size2) ** l_number * exp(-2.*r2/ spot_size2)))
+						fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) + tfac * (-zpos * (2.*l_number/r2 - 4./spot_size2) *(amp / (1. + xpos ** 2. / z_R2) * (2. * r2 / spot_size2) ** l_number * exp(-2.*r2/ spot_size2)))
 					enddo
 				enddo
 			enddo
@@ -1006,6 +993,9 @@ module ext_driver32_jf
 		wavek = real(nx)/wavemode
 		wavek = 6.283185307/wavek
 
+                tfac = 0.0
+                tempamp = 0.0
+
 		if (.not. allocated(proc_pos)) then
 			allocate(proc_pos(nvpy,nvpz,2))
 			do i = 0, nvpy-1
@@ -1017,21 +1007,14 @@ module ext_driver32_jf
 				enddo
 			enddo
 		endif
-	
-
-!               Exponential in time
-!               Just to be extra careful, we have a cutoff
-                if ((t < timerise + timeflat + timefall) .and. (t > 0)) then
-                        tfac = exp(-((t-(timerise+0.5*timeflat))/timerise)**4.0)
-                endif
-
-!		if (t < timerise) then
-!			tfac = t / timerise
-!		else if (t < timerise + timeflat) then
-!			tfac = 1.
-!		else if (t < timerise + timeflat + timefall) then
-!			tfac = 1. - (t - (timerise+timeflat))/timefall
-!		endif
+		
+		if (t < timerise) then
+			tfac = t / timerise
+		else if (t < timerise + timeflat) then
+			tfac = 1.
+		else if (t < timerise + timeflat + timefall) then
+			tfac = 1. - (t - (timerise+timeflat))/timefall
+		endif
 	
                 !Here we use amp from the input deck and tfac depending on rise fall and flat.        
 		tfac = tfac * amp
@@ -1049,29 +1032,29 @@ module ext_driver32_jf
 				        l_diff = abs(real(l_number1 - l_number2))
                                         phi_l = l_diff * atan2(zpos, ypos)
                                         if (r2 /= 0.) then
-                                                tempamp = tfac * (2. * r2 / spot_size2)&
-                                                & ** (l_sum / 2.) * exp(-2.*r2 / spot_size2)
+                                                tempamp = tfac * (2. * r2 / spot_size2) ** (l_sum / 2.) * exp(-2.*r2 / spot_size2)
                                         else
                                                 tempamp = tfac
                                         endif
 
+                                        ! Add extra damping so there's a maximum r cutoff around 2 spot_size
+                                        if (r2 > 4 * spot_size2) then
+                                                tempamp = tempamp * exp(-r2**2/spot_size2**2)
+                                        endif
+                                        !Make the maximum force equal to amp from the input deck
+                                        if (l_sum /= 0) then
+                                                tempamp = tempamp / wavek * (2/l_sum) ** (l_sum / 2)*exp(l_sum/2)
+                                        else
+                                                tempamp = tempamp / wavek
+                                        endif
+
+                                        print*, tempamp
                                         do i=1, nxe
                                                 xpos = real(i) - 2.
-                                                fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1) - &
-                                                &wavek * tempamp * sin(phi_l -wavek * &
-                                                &xpos + wavew * t)
+                                                fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1) - wavek * tempamp * sin(phi_l -wavek * xpos + wavew * t)
                                                 if (r2 /= 0.) then
-                                                       fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1)&
-                                                       & + tempamp * (-1 * zpos * l_diff / &
-                                                       &r2 * sin(phi_l - wavek * xpos + wavew&
-                                                       & * t) + ypos * (-l_sum / r2 + 4. / &
-                                                       &spot_size2) * cos(phi_l-wavek * xpos &
-                                                       &+ wavew * t))
-				                       fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) +&
-                                                       & tempamp * (ypos * l_diff / r2 * &
-                                                       &sin(phi_l -wavek * xpos + wavew * t) +&
-                                                       & zpos * (-l_sum / r2 + 4. / spot_size2)&
-                                                       & * cos(phi_l - wavek * xpos + wavew * t))
+                                                       fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1) + tempamp * (-1 * zpos * l_diff / r2 * sin(phi_l - wavek * xpos + wavew * t) + ypos * (-l_sum / r2 + 4. / spot_size2) * cos(phi_l-wavek * xpos + wavew * t))
+				                       fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) + tempamp * (ypos * l_diff / r2 * sin(phi_l -wavek * xpos + wavew * t) + zpos * (-l_sum / r2 + 4. / spot_size2) * cos(phi_l - wavek * xpos + wavew * t))
                                                endif
                                          enddo
 				enddo
@@ -1080,104 +1063,6 @@ module ext_driver32_jf
 
 	end subroutine two_laguerre_gaussian_beams
 
-        subroutine two_lg_beams_zdir(fxyze,t,nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc,l_number1,l_number2)
-		integer :: nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc, l_number1, l_number2
-		real :: t
-		real,dimension(:,:,:,:,:) :: fxyze
-		integer :: i,j,k, yproc, zproc
-		integer, dimension(:,:,:),allocatable,save :: proc_pos
-		real :: xstart,xpos,ypos, zpos, r2, z_R2, l_sum, l_diff, wavek,tempamp,fac, tfac, w_p, phi_l, spot_size2
 
-		wavek = real(nz)/wavemode
-		wavek = 6.283185307/wavek
-
-                tfac = 0.0
-
-		if (.not. allocated(proc_pos)) then
-			allocate(proc_pos(nvpy,nvpz,2))
-			do i = 0, nvpy-1
-				do j = 0, nvpz-1
-					proc_pos(i+1,j+1,1) = ny / nvpy
-					proc_pos(i+1,j+1,1) = proc_pos(i+1,j+1,1) * i
-					proc_pos(i+1,j+1,2) = nz / nvpz
-					proc_pos(i+1,j+1,2) = proc_pos(i+1,j+1,2) * j
-				enddo
-			enddo
-		endif
-	
-
-!               Exponential in time
-!               Just to be extra careful, we have a cutoff
-                if (t < timerise + timeflat + timefall) then
-                        tfac = exp(((t-(timerise+0.5*timeflat))/timerise)**4.0)
-                endif
-
-!		if (t < timerise) then
-!			tfac = t / timerise
-!		else if (t < timerise + timeflat) then
-!			tfac = 1.
-!		else if (t < timerise + timeflat + timefall) then
-!			tfac = 1. - (t - (timerise+timeflat))/timefall
-!		endif
-	
-                !Here we use amp from the input deck and tfac depending on rise fall and flat.        
-		tfac = tfac * amp
-               
-		if (t < timerise + timeflat + timefall) then
-		        yproc = mod(idproc,nvpy) + 1
-        	        zproc = idproc / nvpy + 1
-		        do j = 1, nypmx 
-			        do k = 1, nzpmx
-                                        do i=1, nxe
-                                                xpos = real(i) - 2.
-				                ypos = real(proc_pos(yproc,zproc,1) + j - ny / 2)
-				                zpos = real(proc_pos(yproc,zproc,2) + k - nz / 2)
-                                                r2 = ypos ** 2. + xpos ** 2.
-	        			        spot_size2 = spot_size ** 2. 
-		        		        l_sum = real(l_number1 + l_number2)
-			        	        l_diff = abs(real(l_number1 - l_number2))
-                                                phi_l = l_diff * atan2(ypos, xpos)
-                                                if (r2 /= 0.) then
-                                                        tempamp = tfac * (2. * r2 / spot_size2)&
-                                                        & ** (l_sum / 2.) * exp(-2.*r2 / spot_size2)
-                                                else
-                                                        tempamp = tfac
-                                                endif
-
-                                                ! Add extra damping so there's a maximum r cutoff around 2 spot_size
-                                                if (r2 > 4 * spot_size2) then
-                                                        tempamp = tempamp * exp(-r2**2/spot_size2**2)
-                                                endif
-                                                !Make the maximum force equal to amp from the input deck
-                                                if (l_sum /= 0) then
-                                                        tempamp = tempamp / wavek * (2/l_sum)&
-                                                        & ** (l_sum / 2)*exp(l_sum/2)
-                                                else
-                                                        tempamp = tempamp / wavek
-                                                endif
-
-                                                fxyze(3,i,j,k,1) = fxyze(3,i,j,k,1) - &
-                                                &wavek * tempamp * sin(phi_l -wavek * &
-                                                &zpos + wavew * t)
-                                                if (r2 /= 0.) then
-                                                       fxyze(1,i,j,k,1) = fxyze(1,i,j,k,1)&
-                                                       & + tempamp * (-1 * ypos * l_diff / &
-                                                       &r2 * sin(phi_l - wavek * zpos + wavew&
-                                                       & * t) + xpos * (-l_sum / r2 + 4. / &
-                                                       &spot_size2) * cos(phi_l-wavek * zpos &
-                                                       &+ wavew * t))
-				                       fxyze(2,i,j,k,1) = fxyze(2,i,j,k,1) +&
-                                                       & tempamp * (xpos * l_diff / r2 * &
-                                                       &sin(phi_l -wavek * zpos + wavew * t) +&
-                                                       & ypos * (-l_sum / r2 + 4. / spot_size2)&
-                                                       & * cos(phi_l - wavek * zpos + wavew * t))
-                                               endif
-                                         enddo
-				enddo
-			enddo
-		endif
-
-
-        end subroutine two_lg_beams_zdir
 
 end module ext_driver32_jf

@@ -1,74 +1,27 @@
 #Makefile for 3D parallel PIC codes in new_pbeps32.source
 
-CARBON = /System/Library/Frameworks/Carbon.framework/Carbon
 
 # Makefile mpiifort compiler at LLNL
 
-#MPIFC = mpiifort
-#MPIFC77 = mpiifort
+###############################################################################
+###############################################################################
 
-#FC90 = mpiifort
-#FC77 = mpiifort
-#CC = mpiicc
-#FC90 = mpif90
-#FC77 = mpif90
-#CC = mpicc
-
-#OPTS90 = -O3  -r8 -ipo
-#OPTS77 = -O3  -r8 -ipo
-#OPTS90 = -r8 -xSSE4.1 -fp-model source -assume minus0
-#OPTS77 = -r8 -xSSE4.1 -fp-model source -assume minus0
-
-#CCOPTS = -O3 -ipo
-#MOPTS = -s
-#MBOPTS = -s
-#LOPTS =
-#LEGACY =
-
-#MPIOBJS = nullLOG.o
-
-#HDF_DIR = /usr/local/tools/hdf4
-#H5_DIR = /usr/local/tools/hdf5-intel-serial
-#SZ_DIR = /usr/local/tools/szip
-
-#INCPATH = -I$(HDF_DIR)/include -I$(H5_DIR)/include -I$(H5_DIR)/lib
-
-#LIBS =  -L$(HDF_DIR)/lib -lmfhdf -ldf -ljpeg -lz \
-#        -L$(H5_DIR)/lib -lsz -lhdf5_fortran -lhdf5 \
-#        -L$(SZ_DIR)/lib
-
-#LIBS =  -L$(HDF_DIR)/lib -L$(H5_DIR)/lib -L$(SZ_DIR)/lib \
-#        -Bstatic -lmfhdf -ldf -lhdf5_fortran -lhdf5 \
-#        -Bdynamic -ljpeg -lz -lsz
-
-#################################
 #Debug version
+#MPIFC = ftn
+#MPIFC77 = ftn
 #MPIFC = ftn
 #MPIFC77 = ftn
 MPIFC = mpiifort
 MPIFC77 = mpiifort
-#MPIFC = mpif90
-#MPIFC77 = mpif77
-
-#CC = cc
 CC = mpiicc
-#CC = mpicc
 
 FC90 = $(MPIFC)
 FC77 = $(MPIFC77)
 
-#OPTS90 = -O0 -g -r8
-#OPTS90 = -O3 -s real64
-OPTS90 = -O3 -r8 -ipo -no-prec-div -axCORE-AVX-I,AVX,SSE4.2 -xSSE2 -msse2
-#OPTS90 = -O3 -r8
+OPTS90 = -O3 -r8 -ipo -no-prec-div -xSSE2 -msse2
 OPTS77 = $(OPTS90)
-#OPTS90 = -r8 -xSSE4.1 -fp-model source -assume minus0
-#OPTS77 = -r8 -xSSE4.1 -fp-model source -assume minus0
 
-#CCOPTS = -O0 -g
-#CCOPTS = -O3
-#CCOPTS = -O3 -ipo -no-prec-div
-CCOPTS = -O3 -ipo -no-prec-div -axCORE-AVX-I,AVX,SSE4.2 -xSSE2 -msse2
+CCOPTS = -O3 -ipo -no-prec-div -xSSE2 -msse2
 MOPTS = -s
 MBOPTS = -s
 LOPTS =
@@ -77,216 +30,23 @@ LEGACY =
 # Link convention
 UNDERSCORE = FORTRANSINGLEUNDERSCORE
 
-MPIOBJS = nullLOG.o
-
-#HDF_VERSION = mvapich2-1.8.10
-HDF_VERSION = 1.8.10
-#HDF_DIR = $(HDF5_DIR)
-#HDF_DIR = /global/u2/b/bwinjum/hdf5-1.8.10
-HDF_DIR = /usr/local/tools/hdf5-intel-parallel-$(HDF_VERSION)
-HDF_LIBPATH = -L$(HDF_DIR)/lib -lhdf5_fortran -lhdf5  -lhdf5_hl -lhdf5hl_fortran -lz
-HDF_INCPATH = -I$(HDF_DIR)/include
-
 #SZIP_LIBPATH = -L$(SZIP_DIR)/lib -lsz
-SZIP_LIBPATH = -L/usr/local/tools/szip/lib -lsz
+# SZIP_LIBPATH = -L/usr/local/tools/szip/lib -lsz
+SZIP_LIBPATH = 
 
+#H5_HOME=$(HDF5_ROOT)
+H5_HOME=$(HDF5_DIR)
+#HDF_INCPATH=$(H5_HOME)/include
+HDF_INCPATH=-I$(H5_HOME)/include
+HDF_LIBPATH=-L$(H5_HOME)/lib -lhdf5_fortran -lhdf5  -lhdf5_hl -lhdf5hl_fortran
+#INCPATH = $(HDF_INCPATH)
+#LIBPATH = $(HDF_LIBPATH) 
+INCPATH = $(HDF5_INC)
+LIBPATH = $(HDF5_LIB) 
 
-INCPATH = $(HDF_INCPATH)
-LIBPATH = $(HDF_LIBPATH) $(SZIP_LIBPATH)
+###############################################################################
+###############################################################################
 
-################################
-
-# Makefile Absoft compiler with MacOS X
-
-#MPIFC = f90
-#MPIFC77 = f77
-#FC90 = f90
-#FC77 = f77
-#CC = gcc
-
-#OPTS90 = -O3 -N113 -YEXT_NAMES=LCS -YEXT_SFX=_
-#OPTS77 = -O -N113 -f -N15
-#CCOPTS = -O
-#MOPTS = -s
-#MBOPTS = -s -N11
-#LOPTS = -plainappl
-#LEGACY =
-
-#MPIOBJS = MacMPIf77.o MacMPI_S.o
-#MPOBJS = MacMPf77.o MacMP.o
-
-#LIBS = $(CARBON)
-
-# Makefile Nag compiler with MacOS X
-
-#MPIFC = f95
-#MPIFC77 = f95
-#FC90 = f95
-#FC77 = f95
-#CC = gcc
-
-#OPTS90 = -O3 -r8
-#OPTS77 = -O3 -r8
-#CCOPTS = -O
-#MOPTS = -s
-#MBOPTS = -s
-#LOPTS = -framework carbon 
-#LEGACY = -dusty
-
-#MPIOBJS = MacMPIf77.o MacMPI_S.o
-#MPOBJS = MacMPf77.o MacMP.o
-
-#LIBS =
-
-# Makefile IBM compiler with MacOS X
-
-#MPIFC = xlf90
-#MPIFC77 = xlf
-#FC90 = xlf90
-#FC77 = xlf
-#CC = gcc
-
-#OPTS90 = -O3 -qautodbl=dbl4 -qarch=g5 -qextname
-#OPTS77 = -O3 -qautodbl=dbl4 -qarch=g5 -qextname -qfixed
-#CCOPTS = -O
-#MOPTS = -s
-#MBOPTS = -s
-#LOPTS =
-#LEGACY =
-
-#MPIOBJS = MacMPIf77.o MacMPI_S.o
-#MPOBJS = MacMPf77.o MacMP.o
-
-#LIBS = $(CARBON)
-
-# Makefile IBM compiler with LAM MPI and MacOS X
-
-#MPIFC = mpif77
-#MPIFC77 = mpif77
-#FC90 = xlf90
-#FC77 = xlf
-#CC = gcc
-
-#OPTS90 = -O3 -qautodbl=dbl4 -qarch=g5
-#OPTS77 = -O3 -qautodbl=dbl4 -qarch=g5 -qfixed
-#CCOPTS = -O
-#MOPTS = -s
-#MBOPTS = -s
-#LOPTS =
-#LEGACY =
-
-#MPIOBJS = nullLOG.o
-#MPOBJS = MacMPxlf.o LnxMP.o
-
-#LIBS = $(CARBON)
-
-# Makefile g95 compiler with MacOS X
-
-#MPIFC = g95
-#MPIFC77 = g95
-#FC90 = g95
-#FC77 = g95
-#CC = gcc
-
-#OPTS90 = -O3 -r8 -fno-second-underscore
-#OPTS77 = -O3 -r8 -fno-second-underscore
-#CCOPTS = -O
-#MOPTS = -fstatic
-#MBOPTS = -fstatic
-#LOPTS =
-#LEGACY =
-
-#MPIOBJS = MacMPIf77.o MacMPI_S.o
-#MPOBJS = MacMPf77.o MacMP.o
-
-#LIBS = $(CARBON) -lSystemStubs
-
-# Makefile Intel compiler with Linux
-
-#MPIFC = ifc
-#MPIFC77 = ifc
-#FC90 = ifc
-#FC77 = ifc
-#CC = gcc
-
-#OPTS90 = -O3 -tpp7 -xW -r8
-#OPTS77 = -O3 -tpp7 -xW -r8
-#CCOPTS = -O
-#MOPTS = -save
-#MBOPTS = -save
-#LOPTS = -lpthread
-#LEGACY =
-
-#MPIOBJS = MacMPIf77.o LnxMPI_S.o
-#MPOBJS = MacMPf77.o LnxMP.o LPProcessors.o
-
-#LIBS =
-
-# Makefile Intel compiler with MPI and Linux
-
-MPIFC = mpiifort
-MPIFC77 = mpiifort
-FC90 = ifort
-FC77 = ifort
-CC = gcc
-
-OPTS90 = -O3 -tpp7 -xW -r8
-OPTS77 = -O3 -tpp7 -xW -r8
-CCOPTS = -O
-MOPTS = -save
-MBOPTS = -save
-LOPTS = -lpthread
-LEGACY =
-
-MPIOBJS = nullLOG.o
-MPOBJS = MacMPf77.o LnxMP.o LPProcessors.o
-
-LIBS =
-
-# Makefile Pathscale compiler with AMD Opteron and Linux
-
-#MPIFC = mpipathf90
-#MPIFC77 = mpipathf90
-#FC90 = pathf90
-#FC77 = pathf90
-#CC = gcc
-
-#OPTS90 = -O3 -r8 
-#OPTS77 = -O3 -r8
-#CCOPTS = -O
-#MOPTS = -static-data
-#MBOPTS = -static-data
-#LOPTS = -lpthread
-#LEGACY =
-
-#MPIOBJS = nullLOG.o
-#MPOBJS = MacMPf77.o LnxMP.o LPProcessors.o
-
-#LIBS =
-
-# Makefile PGI compiler with AMD Opteron and Linux
-
-#MPIFC = mpipgf90
-#MPIFC77 = mpipgf90
-#FC90 = pgf90
-#FC77 = pgf90
-#CC = gcc
-
-#OPTS90 = -O3 -r8
-#OPTS77 = -O3 -r8
-#CCOPTS = -O
-#MOPTS = -Msave
-#MBOPTS = -Msave
-#LOPTS = -lpthread
-#LEGACY =
-
-#MPOBJS = MacMPf77.o LnxMP.o LPProcessors.o
-
-#LIBS =
-
-#
-
-#GESOBJS = pespush32mod.o psimul32mod.o
 
 SYSOBJS = os-sys-multi-c.o os-sys-multi.o
 
@@ -306,7 +66,7 @@ ext_driver32_jf.o p32mod_jf.o pinit32lib_jf.o
 ESOBJSIE = pinit32mod_ie.o sqnmod_ie.o p32mod_ie.o p32lib_ie.o prbpush32mod_ie.o \
 prbpush32lib_ie.o ppush32mod_ie.o ppush32lib_ie.o \
 string.o os_util_hdf5.o data_utils.o p_os_util_hdf5.o pdata_utils.o \
-hdf5_write32_ie.o diag32_ie.o par_track_ie.o
+hdf5_write32_ie.o diag32_ie.o par_track.o
 
 MESOBJS = mprbpush32mod.o mppush32mod.o mpfft32mod.o mp32mod.o \
 mprbpush32lib.o mppush32lib.o mpfft32lib.o mp32lib.o 
@@ -326,16 +86,16 @@ NPOBJS = nullMP.o
 
 # Linkage rules
 
-all : new_pbeps32_ie.out
+production : new_pbeps32_ie.out
 
-#all : new_pbeps32.out new_d0_pbeps32.out new_pbbeps32.out new_d0_pbbeps32.out \
-#     threaded
+all : new_pbeps32.out new_d0_pbeps32.out new_pbbeps32.out new_d0_pbbeps32.out \
+     threaded new_pbeps32_ie.out
 
 threaded: new_mpbeps32.out new_d0_mpbeps32.out new_mpbbeps32.out new_d0_mpbbeps32.out
 
-new_pbeps32_ie.out : new_pbeps32_ie.o $(SYSOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS)
+new_pbeps32_ie.out : new_pbeps32_ie.o $(SYSOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS) nullLOG.o
 	$(MPIFC) $(OPTS90) $(LOPTS) -o new_pbeps32_ie.out \
-	new_pbeps32_ie.o $(SYSOBJS) $(GESOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS) $(LIBPATH) $(INCPATH)
+	new_pbeps32_ie.o $(SYSOBJS) $(GESOBJS) $(GESOBJSIE) $(ESOBJS) $(ESOBJSJF) $(ESOBJSIE) $(MPIOBJS) $(NPOBJS) nullLOG.o $(HDF_LIBPATH)
 
 new_pbeps32.out : new_pbeps32.o $(GESOBJS) $(ESOBJS) $(MPIOBJS) $(NPOBJS)
 	$(MPIFC) $(OPTS90) $(LOPTS) -o new_pbeps32.out \
@@ -384,17 +144,8 @@ new_d0_mpbbeps32.out : new_d0_mpbbeps32.o $(ESOBJS) $(MESOBJS) $(MGEMOBJS) $(EMO
 #MacMPIcf.o : MacMPIcf.c
 #	$(CC) $(CCOPTS) -c MacMPIcf.c
 
-MacMPIf77.o : MacMPIf77.c
-	$(CC) $(CCOPTS) -c MacMPIf77.c
 
-MacMPIxlf.o : MacMPIxlf.c
-	$(CC) $(CCOPTS) -c MacMPIxlf.c
 
-MacMPI_S.o : MacMPI_S.c
-	$(CC) $(CCOPTS) -c -I /Developer/Headers/FlatCarbon MacMPI_S.c
-
-LnxMPI_S.o : LnxMPI_S.c
-	$(CC) $(CCOPTS) -c LnxMPI_S.c
 
 #MacMPcf.o : MacMPcf.c
 #	$(CC) $(CCOPTS) -c MacMPcf.c
@@ -544,8 +295,8 @@ pnpfield32mod.o : pnpfield32mod.f pfield32mod.o pdfield32mod.o pbfield32mod.o \
 pdiag32mod.o : pdiag32mod.f pinit32mod.o
 	$(FC90) $(OPTS90) -c pdiag32mod.f
 	
-par_track_ie.o : par_track_ie.f pinit32mod_jf.o
-	$(FC90) $(OPTS90) $(HDF_INCPATH) -c -free par_track_ie.f
+par_track.o : par_track.f pinit32mod_jf.o
+	$(FC90) $(OPTS90) $(HDF_INCPATH) -c -free par_track.f
 
 diag32_ie.o : diag32_ie.f pinit32mod.o pinit32mod_ie.o pinit32mod_jf.o hdf5_write32_ie.o p32mod_jf.o
 	$(FC90) $(OPTS90) -c -free diag32_ie.f
@@ -592,7 +343,7 @@ mp32mod.o : mp32mod.f p32mod.o mp0mod.o
 p32mod.o : p32mod.f p0mod.o
 	$(FC90) $(OPTS90) $(LEGACY) -c p32mod.f
 
-p32mod_ie.o : p32mod_ie.f p0mod.o par_track_ie.o
+p32mod_ie.o : p32mod_ie.f p0mod.o par_track.o
 	$(FC90) $(OPTS90) $(LEGACY) -c -free p32mod_ie.f
 
 p32mod_jf.o : p32mod_jf.f p0mod.o

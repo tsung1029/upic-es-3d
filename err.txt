@@ -1,0 +1,36 @@
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c globals.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c pinit32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c pdiag32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c p0mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c prbpush32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c ppush32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c pfft32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -nofor_main -c p32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c pespush32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c pfield32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2  -c psimul32mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c mp0mod.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -free -c pinit32mod_ie.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -free -c pespush32mod_ie.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -free -c ext_driver32_jf.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -free -c sqnmod_ie.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -I/u/local/apps/hdf5/1.10.0-patch1/intel-17.0.1/intelmpi-5.1.3/include -free -c os_util_hdf5.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -free -c pinit32mod_jf.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -I/u/local/apps/hdf5/1.10.0-patch1/intel-17.0.1/intelmpi-5.1.3/include -free -c par_track.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -c string.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -free -c data_utils.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -I/u/local/apps/hdf5/1.10.0-patch1/intel-17.0.1/intelmpi-5.1.3/include -free -c p_os_util_hdf5.f
+ifort -qopenmp  -O3 -r8 -ipo -no-prec-div -msse2 -free -c pdata_utils.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -free -c hdf5_write32_ie.f
+mpiifort -qopenmp -O3 -r8 -ipo -no-prec-div -msse2 -I/u/local/apps/hdf5/1.10.0-patch1/intel-17.0.1/intelmpi-5.1.3/include -free -c psimul32mod_ie.f
+psimul32mod_ie.f(2213): error #6285: There is no matching specific subroutine for this generic subroutine call.   [PCGUARD]
+                   call pcguard(sfield, kstrt, nvpy, nvpz, kyp, kzp, ngds, iblok&
+------------------------^
+psimul32mod_ie.f(2236): error #6285: There is no matching specific subroutine for this generic subroutine call.   [PLSUM]
+               call plsum(fv(:,:, 1))
+--------------------^
+psimul32mod_ie.f(2291): error #6285: There is no matching specific subroutine for this generic subroutine call.   [PCGUARD]
+                   call pcguard(sfield, kstrt, nvpy, nvpz, kyp, kzp, ngds, iblok&
+------------------------^
+compilation aborted for psimul32mod_ie.f (code 1)
+make: *** [psimul32mod_ie.o] Error 1
