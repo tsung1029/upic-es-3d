@@ -1217,8 +1217,6 @@ program pbeps32
         call laguerre_gaussian_ponderomotive_force(fxyze, real(ntime) * dt, nx, nxe, ny, nypmx, nz, nzpmx, nvpy, nvpz, idproc, 1)
     case (5)
         call two_laguerre_gaussian_beams(fxyze,real(ntime) * dt, nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc,l_number1,l_number2)
-    case (6)
-        call two_lg_beams_zdir(fxyze,real(ntime)*dt,nx,nxe,ny,nypmx,nz,nzpmx,nvpy,nvpz,idproc,l_number1,l_number2)
     case (7)
         call gauss_tran_per_wavelen(fxyze, real(ntime) * dt, nx, nxe, ny, nypmx, nz, nzpmx, nvpy, nvpz, idproc)
     case (12)
