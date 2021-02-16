@@ -966,8 +966,8 @@ module ext_driver32_jf
 				do k = 1, nzpmx
 					yproc = mod(idproc,nvpy) + 1
 					zproc = idproc / nvpy + 1
-					ypos = real(proc_pos(yproc,zproc,1) + j)
-					zpos = real(proc_pos(yproc,zproc,2) + k)
+					ypos = real(proc_pos(yproc,zproc,1) + j - ny/2)
+					zpos = real(proc_pos(yproc,zproc,2) + k - nz/2)
 					r2 = ypos ** 2. + zpos ** 2.
 					spot_size2 = spot_size ** 2. 
                                         do i=1, nxe
